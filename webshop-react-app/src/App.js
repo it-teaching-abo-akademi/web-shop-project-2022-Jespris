@@ -24,8 +24,7 @@ function App() {
     let items;
     const [shopItems, setShopItems] = useState([])
     const [cartItems, setCartItems] = useState([])
-
-
+    const [searchValue, setSearchValue] = useState("")
 
     const deleteCartItemHandler = (itemID) => {
         setCartItems(prevState => [
@@ -46,18 +45,26 @@ function App() {
         setShopItems(prevState => [...prevState, item])
     }
 
-    items = shopItems.map((value, index) => (
+    let filteredItems = shopItems;
+
+    if (searchValue !== "") {
+        console.log("Search value is", searchValue, "... filtering items")
+        filteredItems = shopItems.filter(value => value.name.toLowerCase().includes(searchValue.toLowerCase()));
+    }
+
+    items = filteredItems.map((value, index) => (
         <ShopItem key={index} shopItem={value} addCartItemHandler={addCartItem}></ShopItem>
     ))
 
-    const apiFetchPost = (shopItem) => {
-        console.log("Posting shop item '", shopItem.name, "' to API")
+    // TODO: change default user to Logged in user's username
+    const apiFetchPost = (name, description, price) => {
+        console.log("Posting shop item '", name, "' to API")
         fetch(SHOP_ITEM_API_URL, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({name: shopItem.name, description: shopItem.description, price: shopItem.price, username: shopItem.username})
+            body: JSON.stringify({name: name, description: description, price: price, username: "default"})
         }).then(
             response => {
                 if(!response.ok) {
@@ -175,6 +182,10 @@ function App() {
         }).catch(err => console.log("Error: ", err))
     }
 
+    const searchFormHandler = (search) => {
+        setSearchValue(search)
+    }
+
     // do whenever refresh
     useEffect(() => {
         refreshPage();
@@ -186,7 +197,7 @@ function App() {
                   Welcome to my shop!
           </h1>
           <div>
-              <TopBarContainer cartItems={cartItems} deleteCartItemHandler={deleteCartItemHandler} deleteCartHandler={deleteCartHandler}></TopBarContainer>
+              <TopBarContainer cartItems={cartItems} deleteCartItemHandler={deleteCartItemHandler} deleteCartHandler={deleteCartHandler} searchFormHandler={searchFormHandler}></TopBarContainer>
           </div>
           <div>
               <InputForm text={"Add shop item to database"} inputFormHandler={apiFetchPost}></InputForm>
