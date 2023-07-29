@@ -15,6 +15,7 @@ function App() {
     const [loginToken, setLoginToken] = useState("")
     const [username, setUsername] = useState("")
     const [email, setEmail] = useState("")
+    const [password, setPassword] = useState("")
 
     const updateUsername = (name) => {
         setUsername(name);
@@ -24,7 +25,7 @@ function App() {
         setEmail(email);
     }
 
-    const handleLogin = async (token) => {
+    const handleLogin = async (token, password) => {
         setLoginToken(token);
         // update username and email by getting the user by token from API
         try {
@@ -34,6 +35,7 @@ function App() {
 
             setUsername(response.data.username);
             setEmail(response.data.username);
+            setPassword(password);
 
         } catch (error) {
             console.log("error logging in (APP): ", error)
@@ -42,8 +44,9 @@ function App() {
 
     const handleLogout = () => {
         setLoginToken(null);
-        setUsername(null)
-        setEmail(null)
+        setUsername(null);
+        setEmail(null);
+        setPassword(null);
     }
 
       return (
@@ -58,8 +61,14 @@ function App() {
                           <NavLink className={"menu-item"} to="/shop">Shop</NavLink>
                           <NavLink className={"menu-item"} to="/signup">Sign Up</NavLink>
                           <NavLink className={"menu-item"} to="/login">Login</NavLink>
-                          <NavLink className={"menu-item"} to="/account">Account</NavLink>
-                          <NavLink className={"menu-item"} to="/myitems">My items</NavLink>
+                          {username &&
+                              <div style={{display: 'flex'}}>
+                                  <NavLink className={"menu-item"} to="/account">Account</NavLink>
+                                  <NavLink className={"menu-item"} to="/myitems">My items</NavLink>
+                                  <NavLink className={"menu-item"} to="/login" onClick={handleLogout}>Log out</NavLink>
+                              </div>
+                          }
+
                       </div>
                   </div>
                   <Routes>
@@ -67,7 +76,7 @@ function App() {
                       <Route path="/shop" element={<ShopComponent username={username}/>}/>
                       <Route path="/signup" element={<SignUpComponent/>}/>
                       <Route path="/login" element={<LoginComponent handleLogin={handleLogin} />}/>
-                      <Route path="/account" element={<AccountComponent token={loginToken}/>}/>
+                      <Route path="/account" element={<AccountComponent token={loginToken} password={password}/>}/>
                       <Route path="/myitems" element={<MyItemsComponent token={loginToken}/>}/>
                   </Routes>
               </BrowserRouter>
