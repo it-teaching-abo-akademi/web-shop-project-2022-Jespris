@@ -17,14 +17,6 @@ function App() {
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
 
-    const updateUsername = (name) => {
-        setUsername(name);
-    }
-
-    const updateEmail = (email) => {
-        setEmail(email);
-    }
-
     const handleLogin = async (token, password) => {
         setLoginToken(token);
         // update username and email by getting the user by token from API
@@ -72,8 +64,8 @@ function App() {
                       </div>
                   </div>
                   <Routes>
-                      <Route path="/" element={<HomeComponent token={loginToken}/>}/>
-                      <Route path="/shop" element={<ShopComponent username={username}/>}/>
+                      <Route path="/" element={<HomeComponent token={loginToken} username={username}/>}/>
+                      <Route path="/shop" element={<ShopComponent username={username} token={loginToken}/>}/>
                       <Route path="/signup" element={<SignUpComponent/>}/>
                       <Route path="/login" element={<LoginComponent handleLogin={handleLogin} />}/>
                       <Route path="/account" element={<AccountComponent token={loginToken} password={password}/>}/>

@@ -10,3 +10,5 @@ class ShopItem(models.Model):
     price = models.DecimalField(max_digits=9, decimal_places=2)
     username = models.CharField(max_length=50, default="default user")
     date = models.DateTimeField(auto_now_add=True)
+    sold = models.BooleanField(default=False)
+    version = models.IntegerField(default=0)
