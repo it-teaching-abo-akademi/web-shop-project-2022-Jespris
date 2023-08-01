@@ -1,0 +1,39 @@
+POST http://127.0.0.1:8000/api/v1/auth/register/
+Content-Type: application/json
+
+{
+  "username": "Jesper",
+  "email": "jesper@gmail.com",
+  "password": "Jesper1304"
+}
+
+###
+
+POST http://127.0.0.1:8000/api/v1/auth/login/
+Content-Type: application/json
+
+{
+  "username": "Jesper",
+  "password": "Jesper1304"
+}
+
+###
+
+POST http://localhost:8000/api/v1/auth/populateUserDB/
+Content-Type: application/json
+
+{
+  "number": 6
+}
+
+###
+
+POST http://localhost:8000/api/v1/auth/login/
+Content-Type: application/json
+
+{
+  "username": "testuser#1",
+  "password": "testuser#1"
+}
+
+

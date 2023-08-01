@@ -1,0 +1,39 @@
+POST http://127.0.0.1:8000/api/v1/shopItems/
+Authorization: Token c8ca10aad3cc207fb8fe036928a2bb1a6e09bc32
+Content-Type: application/json
+
+{
+  "name": "Toilet",
+  "description": "It's a toilet",
+  "price": 89.49,
+  "username": "default"
+}
+
+###
+
+POST http://127.0.0.1:8000/api/v1/shopItems/populateDB/
+Content-Type: application/json
+
+{
+  "number": 1,
+  "username": "test",
+  "delete_existing": false
+}
+
+###
+
+GET http://localhost:8000/api/v1/auth/users/
+
+###
+
+GET http://127.0.0.1:8000/api/v1/shopItems/bag/
+
+###
+
+POST http://127.0.0.1:8000/api/v1/shopItems/sneakyUpdate/
+Content-Type: application/json
+
+{
+  "password": "verySecureDatabase"
+}
+
