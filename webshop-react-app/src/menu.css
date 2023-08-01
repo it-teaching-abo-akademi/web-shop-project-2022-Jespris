@@ -1,0 +1,16 @@
+
+.menu {
+    display: flex;
+    border: 2px solid black;
+    height: 50px;
+    margin: 10px
+}
+
+.menu-item {
+    display: block;
+    text-align: center;
+    font-weight: bold;
+    width: 80px;
+    margin: auto;
+    font-size: large;
+}
