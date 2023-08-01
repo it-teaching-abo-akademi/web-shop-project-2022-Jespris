@@ -35,6 +35,7 @@ REST_FRAMEWORK = {
 # Application definition
 
 INSTALLED_APPS = [
+    'corsheaders',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -44,8 +45,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'WebShopApp',
-    'account',
-    'corsheaders'
+    'account'
 ]
 
 MIDDLEWARE = [
@@ -60,10 +60,8 @@ MIDDLEWARE = [
 ]
 
 CORS_ORIGIN_ALLOW_ALL = True
-CORS_ORIGIN_WHITELIST = (
-    'http://localhost:8000',
-    'http://localhost:3000'
-)
+
+TOKEN_EXPIRE_SECONDS = 1200  # 20min = 1200 seconds
 
 ROOT_URLCONF = 'WebshopServerProject.urls'
 

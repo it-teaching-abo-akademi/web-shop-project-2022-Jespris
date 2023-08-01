@@ -5,45 +5,53 @@ import HomeComponent from "./components/HomeComponent";
 import SignUpComponent from "./components/SignUpComponent";
 import LoginComponent from "./components/LoginComponent";
 import MyItemsComponent from "./components/MyItemsComponent";
-import {BrowserRouter, Route, Link, NavLink, Routes} from "react-router-dom";
+import {BrowserRouter, Route, NavLink, Routes} from "react-router-dom";
 import './menu.css';
-import {useState} from "react";
 import axios from "axios";
 
 function App() {
 
-    const [loginToken, setLoginToken] = useState("")
-    const [username, setUsername] = useState("")
-    const [email, setEmail] = useState("")
-    const [password, setPassword] = useState("")
-
-    const handleLogin = async (token, password) => {
-        setLoginToken(token);
-        // update username and email by getting the user by token from API
-        try {
-            const response = await axios.post('http://localhost:8000/api/v1/auth/users/', {
-                token
-            });
-
-            setUsername(response.data.username);
-            setEmail(response.data.username);
-            setPassword(password);
-
-        } catch (error) {
-            console.log("error logging in (APP): ", error)
-        }
-    }
-
     const handleLogout = () => {
-        setLoginToken(null);
-        setUsername(null);
-        setEmail(null);
-        setPassword(null);
+        localStorage.removeItem('csrfToken')
+        localStorage.removeItem('authToken')
+        localStorage.removeItem('username')
     }
+
+    const fetchCSRFToken = () => {
+        return fetch('http://localhost:8000/api/v1/csrfToken/')
+            .then(response => response.json())
+            .then(data => data.csrfToken);
+    }
+
+    const handleLogin = (username, token) => {
+        localStorage.setItem('username', username)
+        localStorage.setItem('authToken', token)
+        fetchCSRFToken().then(csrfToken => {
+            console.log("CSRF Token: ", csrfToken);
+            localStorage.setItem('csrfToken', csrfToken);
+        }).catch(error => {
+            console.error("Error fetching CSRF token", error);
+        });
+    }
+
+    const csrfToken= localStorage.getItem('csrfToken')
+    const authToken = localStorage.getItem('authToken')
+    const username = localStorage.getItem('username')
+    console.log("Username from local storage", username)
+    console.log("Token from local storage", authToken)
+
+    if (authToken && csrfToken && username) {
+        console.log("Setting tokens for headers!")
+        // set tokens to request headers for all API calls
+        axios.defaults.headers.common['X-CSRFToken'] = csrfToken;
+        axios.defaults.headers.common['Authorization'] = 'Token ' + authToken;
+    }
+
+
 
       return (
-          <div style={{margin: '10px'}}>
-              <h1 style={{textAlign: 'center'}}>
+          <div style={{margin: '10px', fontFamily: "Comic Sans MS"}}>
+              <h1 style={{textAlign: 'center', }}>
                       Welcome to my shop!
               </h1>
               <BrowserRouter>
@@ -60,16 +68,15 @@ function App() {
                                   <NavLink className={"menu-item"} to="/login" onClick={handleLogout}>Log out</NavLink>
                               </div>
                           }
-
                       </div>
                   </div>
                   <Routes>
-                      <Route path="/" element={<HomeComponent token={loginToken} username={username}/>}/>
-                      <Route path="/shop" element={<ShopComponent username={username} token={loginToken}/>}/>
+                      <Route path="/" element={<HomeComponent/>}/>
+                      <Route path="/shop" element={<ShopComponent/>}/>
                       <Route path="/signup" element={<SignUpComponent/>}/>
-                      <Route path="/login" element={<LoginComponent handleLogin={handleLogin} />}/>
-                      <Route path="/account" element={<AccountComponent token={loginToken} password={password}/>}/>
-                      <Route path="/myitems" element={<MyItemsComponent token={loginToken}/>}/>
+                      <Route path="/login" element={<LoginComponent handleLogin={handleLogin}/>}/>
+                      <Route path="/account" element={<AccountComponent/>}/>
+                      <Route path="/myitems" element={<MyItemsComponent/>}/>
                   </Routes>
               </BrowserRouter>
           </div>
