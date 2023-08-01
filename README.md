@@ -5,7 +5,9 @@ Project created by Jesper Andersson, jesper.j.andersson@abo.fi
 
 Requirements implemented:
 Everything hopefully! 13/24 Mandatory points, 8/16 optional points
+
 Functional Requirements
+
 1. Site architecture (MANDATORY) (4p)
 2. Automatic Db population (MANDATORY) (TODO: move to landing page, bugged) (2p)
 3. Browse (MANDATORY) (TODO: Pagination) (3p)
@@ -20,11 +22,15 @@ Functional Requirements
 12. Edit Account (1p)
 13. TODO: Display inventory
 14. TODO: Edit item
+
 Non-Functional Requirements 
+
 15. TODO: TEST Responsiveness
 16. Security (2p)
 17. Usability (1p)
+
 Technical requirements
+
 18. Backend (MANDATORY) TODO: move landing page (serve html), look into email
 19. Frontend (MANDATORY)
 20. Browser (MANDATORY) TODO: test on google chrome (Mostly tested on Brave)
