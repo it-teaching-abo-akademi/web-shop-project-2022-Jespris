@@ -8,6 +8,9 @@ import MyItemsComponent from "./components/MyItemsComponent";
 import {BrowserRouter, Route, NavLink, Routes} from "react-router-dom";
 import './menu.css';
 import axios from "axios";
+import {useEffect, useState} from "react";
+
+export const SERVER_URL = 'http://localhost:8011/'
 
 function App() {
 
@@ -18,7 +21,7 @@ function App() {
     }
 
     const fetchCSRFToken = () => {
-        return fetch('http://localhost:8000/api/v1/csrfToken/')
+        return fetch(SERVER_URL + 'api/v1/csrfToken/')
             .then(response => response.json())
             .then(data => data.csrfToken);
     }
@@ -34,20 +37,56 @@ function App() {
         });
     }
 
-    const csrfToken= localStorage.getItem('csrfToken')
-    const authToken = localStorage.getItem('authToken')
-    const username = localStorage.getItem('username')
-    console.log("Username from local storage", username)
-    console.log("Token from local storage", authToken)
+    const [csrfToken, setCSRFToken] = useState(null);
+    const [username, setUsername] = useState(null);
+    const [authToken, setAuthToken] = useState(null)
 
-    if (authToken && csrfToken && username) {
-        console.log("Setting tokens for headers!")
-        // set tokens to request headers for all API calls
-        axios.defaults.headers.common['X-CSRFToken'] = csrfToken;
-        axios.defaults.headers.common['Authorization'] = 'Token ' + authToken;
-    }
+    useEffect(() => {
+        console.log("App state update")
+        // TODO: validate login token
+        if (username && authToken) {
+            console.log("Validating user token from local storage...")
+            fetch(SERVER_URL + 'api/v1/auth/users/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',  // Auth token hopefully set in App.js
+                },
+                body: JSON.stringify({token: authToken})
+            }).then(
+                response => {
+                    if (!response.ok) {
+                        throw new Error("API posting error: " + response.statusCode);
+                    }
+                    return response.json();
+                }
+            ).then(data => {
+                console.log("DATA: ", data)
+                if (data.username === username){
+                    console.log("User found!")
+                } else {
+                    console.log("User not found, logging out...")
+                    localStorage.removeItem('csrfToken')
+                    localStorage.removeItem('authToken')
+                    localStorage.removeItem('username')
+                }
+            })
+        }
 
+        setUsername(localStorage.getItem('username'))
+        setAuthToken(localStorage.getItem('authToken'))
+        setCSRFToken(localStorage.getItem('csrfToken'))
 
+        console.log("Username from storage: ", username)
+        console.log("CSRF from storage: ", csrfToken)
+        console.log("AUTH from storage: ", authToken)
+
+        if (authToken && csrfToken && username) {
+            console.log("Setting tokens for headers!")
+            // set tokens to request headers for all API calls
+            axios.defaults.headers.common['X-CSRFToken'] = csrfToken;
+            axios.defaults.headers.common['Authorization'] = 'Token ' + authToken;
+        }
+    }, [username, authToken, csrfToken])
 
       return (
           <div style={{margin: '10px', fontFamily: "Comic Sans MS"}}>
@@ -72,7 +111,7 @@ function App() {
                   </div>
                   <Routes>
                       <Route path="/" element={<HomeComponent/>}/>
-                      <Route path="/shop" element={<ShopComponent/>}/>
+                      <Route path="/shop" element={<ShopComponent username={username}/>}/>
                       <Route path="/signup" element={<SignUpComponent/>}/>
                       <Route path="/login" element={<LoginComponent handleLogin={handleLogin}/>}/>
                       <Route path="/account" element={<AccountComponent/>}/>

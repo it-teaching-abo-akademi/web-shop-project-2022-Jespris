@@ -108,9 +108,10 @@ class DeleteItemDB(GenericAPIView):
 
 class PopulateDatabase(GenericAPIView):
     authentication_classes = [AllowAny]
-
+    print("Here")
     def post(self, request):
         # Get the 'number' value from the request.data dictionary
+        print("Populate database request: ", request)
         number_of_items = int(request.data.get('number', 0))
         user = request.data.get('username', 0)
 

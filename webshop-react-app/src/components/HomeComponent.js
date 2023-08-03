@@ -3,12 +3,11 @@ import {useEffect, useState} from "react";
 import stonks from '../assets/stonks.png';
 import stocksGraph from '../assets/stocksGraph.png';
 import cashHand from '../assets/cashHand.png';
-
+import {SERVER_URL} from "../App.js";
 
 function HomeComponent() {
 
-    const authToken = localStorage.getItem('authToken')
-    const username = localStorage.getItem('username');
+    const POPULATE_DB = SERVER_URL + 'api/v1/populateDB/';
 
     const HomeContainer = {
         margin: '10px',
@@ -42,12 +41,14 @@ function HomeComponent() {
     const [recentItems, setRecentItems] = useState(0);
     const [nrUsers, setNrUsers] = useState(0);
     const [activeUsers, setActiveUsers] = useState(0);
+    const [dbReset, setDBReset] = useState(false);
 
     const getItems = async () => {
         try {
-            const r = await fetch('http://localhost:8000/api/v1/shopItems/');
+            const r = await fetch(SERVER_URL + 'api/v1/shopItems/');
             const data = await r.json();
             setItems(data.results);
+            setNrItems(data.count)
         } catch (error) {
             console.log("Error fetching items data: ", error)
             setItems([])
@@ -56,7 +57,7 @@ function HomeComponent() {
 
     const getUsers = async () => {
         try {
-            const response = await fetch('http://localhost:8000/api/v1/auth/users/');
+            const response = await fetch(SERVER_URL + 'api/v1/auth/users/');
             // console.log(data);
             const data = await response.json();
             setUsers(data);
@@ -66,15 +67,22 @@ function HomeComponent() {
         }
     }
 
-    function getActiveUsers() {
-        const activeUsersCount = getUsers().then(data => {
-            data.filter((user) => user.is_active)
-        });
-        setActiveUsers(activeUsersCount);
+    const resetDBHandler = () => {
+        localStorage.removeItem('username')
+        localStorage.removeItem('authToken')
+        PopulateDB();
+        setDBReset(true)
     }
 
-    function getRecentItems() {
-
+    const PopulateDB = () => {
+        console.log("Populating database with new users and their shop items");
+        fetch(POPULATE_DB).then(response => {
+            if (!response.ok) {
+                throw new Error("Error deleting items from API call: " + response.statusCode);
+            }
+            console.log("Database repopulated! Response: ", response)
+            return response.json();
+        });
     }
 
     useEffect(() => {
@@ -84,8 +92,6 @@ function HomeComponent() {
 
     // on refresh or state change?
     useEffect(() => {
-        setNrItems(items.length);
-
         setNrUsers(users.length);
 
         const activeUserList = users.filter((user) => user.is_active);
@@ -116,7 +122,6 @@ function HomeComponent() {
                             <li>{nrUsers} total users</li>
                             <li>{activeUsers} active users</li>
                         </ul>
-
                     </div>
                 </div>
                 <div style={InfoSection}>
@@ -127,9 +132,14 @@ function HomeComponent() {
                         <div style={{margin: 'auto', display: 'flex'}}>
                             <NavLink style={LinkStyle} to='/signup'>Sign up</NavLink>
                             <NavLink style={LinkStyle} to='/shop'>Go to shop</NavLink>
+                            {!dbReset &&
+                                <NavLink style={LinkStyle} onClick={() => resetDBHandler()}>Repopulate database with users and items</NavLink>
+                            }
+                            {dbReset &&
+                                <NavLink style={LinkStyle} to='/shop'>Check out new items (Go to shop)</NavLink>
+                            }
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>
@@ -153,6 +163,5 @@ function GraphicsComponent({image}) {
     )
 
 }
-
 
 export default HomeComponent;

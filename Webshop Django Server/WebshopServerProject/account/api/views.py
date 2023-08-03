@@ -67,6 +67,8 @@ class PopulateUserDB(APIView):
             )
             Token.objects.create(user=user)
 
-        return Response({"message": f"User database populated with {nr} test users"})
+        users = User.objects.all()
+        serializer = UserSerializer(users, many=True)
+        return Response(serializer.data)  # return the newly created users
 
 

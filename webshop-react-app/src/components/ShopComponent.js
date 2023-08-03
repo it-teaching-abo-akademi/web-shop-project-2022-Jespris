@@ -7,8 +7,9 @@ import catJam from '../assets/catjam.gif';
 import moneyCat from '../assets/moneyCat.gif';
 import doorCat from '../assets/doorCat.gif';
 import aggroLickCat from '../assets/aggressiveLickCat.gif';
+import {SERVER_URL} from "../App";
 
-function ShopComponent() {
+function ShopComponent({username}) {
     class ItemInShop {
         constructor(name, description, price, username, date) {
             this.name = name;
@@ -19,13 +20,8 @@ function ShopComponent() {
         }
     }
 
-    const username = localStorage.getItem('username')
+    const SHOP_ITEM_API_URL = SERVER_URL + 'api/v1/shopItems/';
 
-    const SHOP_ITEM_API_URL = 'http://localhost:8000/api/v1/shopItems/';
-    const POPULATE_USERS = 'http://localhost:8000/api/v1/auth/populateUserDB/';
-    const POPULATE_ITEMS = 'http://localhost:8000/api/v1/shopItems/populateDB/';
-    const GET_ALL_USERS = 'http://localhost:8000/api/v1/auth/users/';
-    const DELETE_ITEM_DB = 'http://localhost:8000/api/v1/shopItems/deleteItemDB/';
     let items;
     const [shopItems, setShopItems] = useState([]);
     const [cartItems, setCartItems] = useState([]);
@@ -92,14 +88,6 @@ function ShopComponent() {
         return data;
     }
 
-    const APIFetchUsers = async () => {
-        const response = await fetch(GET_ALL_USERS);
-        if (!response.ok){
-            throw new Error("API fetch error: " + response.statusCode)
-        }
-        return await response.json()
-    }
-
     const APIFetchShopItems = () => {
         console.log("Fetching shop items...")
         APIFetch().then(data => setShopItems(
@@ -108,65 +96,6 @@ function ShopComponent() {
             .catch(err => console.log("Error: ", err))
         console.log("DONE fetching shop items!")
     }
-
-    const deleteItemsFromApi = () => {
-      console.log("Deleting items from the API");
-      return fetch(DELETE_ITEM_DB).then(response => {
-        if (!response.ok) {
-          throw new Error("Error deleting items from API call: " + response.statusCode);
-        }
-        return response.json();
-      });
-    };
-
-    const addUsersToApi = () => {
-      console.log("Adding users to the API");
-      return fetch(POPULATE_USERS, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ number: 6 }),
-      }).then(response => {
-        if (!response.ok) {
-          throw new Error("API posting error: " + response.statusCode);
-        }
-        return response.json();
-      });
-    };
-
-    const addShopItemsToApi = async (user) => {
-      console.log(`Adding shop items for user ${user}`);
-      return fetch(POPULATE_ITEMS, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ number: 10, username: user }),
-      }).then(response => {
-        if (!response.ok) {
-          throw new Error("Error adding items from API call: " + response.statusCode);
-        }
-        return response.json();
-      });
-    };
-
-    const PopulateDB = () => {
-      console.log("Populating database with new users and their shop items");
-      deleteItemsFromApi()
-        .then(() => addUsersToApi())
-        .then(data => {
-          console.log("DATA: ", data);
-          return APIFetchUsers();
-        })
-        .then(users => {
-          console.log("USER DATA: ", users);
-          users = [...users.slice(0, 3)];
-          return Promise.all(users.map(user => addShopItemsToApi(user.username)));
-        })
-        .then(() => refreshPage())
-        .catch(err => console.log("Error: ", err));
-    };
 
     const refreshPage = () => {
         console.log("App changed");
@@ -199,7 +128,8 @@ function ShopComponent() {
     // do whenever refresh
     useEffect(() => {
         refreshPage();
-    }, [searchValue])  // setting dependency to "refreshPage()" as IDE suggests causes a recursion, slowing down the website
+
+    }, [searchValue, currentPage])  // setting dependency to "refreshPage()" as IDE suggests causes a recursion, slowing down the website
 
     return (
         <div className={"shop"}>

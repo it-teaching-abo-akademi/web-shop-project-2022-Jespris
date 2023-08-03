@@ -1,6 +1,5 @@
 import {useEffect, useState} from "react";
 
-
 function AccountComponent({token, password}) {
 
     const [oldPasswordValue, setOldPassword] = useState("");

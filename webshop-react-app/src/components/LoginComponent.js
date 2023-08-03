@@ -1,6 +1,7 @@
 import {useState} from "react";
 import {Navigate} from "react-router-dom";
 import axios from 'axios';
+import {SERVER_URL} from "../App";
 
 function LoginComponent(props) {
 
@@ -40,7 +41,7 @@ function LoginComponent(props) {
 
     const loginFormHandler = async (username, password) => {
         try {
-            const response = await axios.post('http://localhost:8000/api/v1/auth/login/', {
+            const response = await axios.post(SERVER_URL + 'api/v1/auth/login/', {
                 username,
                 password,
             });

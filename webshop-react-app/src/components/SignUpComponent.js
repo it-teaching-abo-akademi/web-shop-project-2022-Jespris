@@ -2,6 +2,7 @@ import {useState} from "react";
 import {Navigate} from "react-router-dom";
 import exitedCat from '../assets/exitedCat.gif';
 import keyBoardCat from '../assets/keyboardCat.gif';
+import {SERVER_URL} from "../App";
 
 
 function SignUpComponent() {
@@ -49,7 +50,7 @@ function SignUpComponent() {
     }
 
     const signUpFormHandler = (email, password, username) => {
-        fetch("http://127.0.0.1:8000/api/v1/auth/register/", {
+        fetch(SERVER_URL + "api/v1/auth/register/", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
