@@ -25,11 +25,14 @@ function ShopComponent() {
     const POPULATE_USERS = 'http://localhost:8000/api/v1/auth/populateUserDB/';
     const POPULATE_ITEMS = 'http://localhost:8000/api/v1/shopItems/populateDB/';
     const GET_ALL_USERS = 'http://localhost:8000/api/v1/auth/users/';
-    const DELETE_ITEM_DB = 'http://localhost:8000/api/v1/shopItems/deleteItemDB/'
+    const DELETE_ITEM_DB = 'http://localhost:8000/api/v1/shopItems/deleteItemDB/';
     let items;
-    const [shopItems, setShopItems] = useState([])
-    const [cartItems, setCartItems] = useState([])
-    const [searchValue, setSearchValue] = useState("")
+    const [shopItems, setShopItems] = useState([]);
+    const [cartItems, setCartItems] = useState([]);
+    const [searchValue, setSearchValue] = useState("");
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1)
+    const ITEMS_PER_PAGE = 10;
 
     const deleteCartItemHandler = (itemID) => {
         setCartItems(prevState => [
@@ -55,7 +58,8 @@ function ShopComponent() {
         fetch(SHOP_ITEM_API_URL, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'  // Auth token hopefully set in App.js
+                'Content-Type': 'application/json',  // Auth token hopefully set in App.js
+                'Authorization': 'Token ' + localStorage.getItem('authToken')
             },
             body: JSON.stringify({name: name, description: description, price: price, username: username})
         }).then(
@@ -73,9 +77,12 @@ function ShopComponent() {
 
     const APIFetch = async () => {
         let url = SHOP_ITEM_API_URL;
-        if (searchValue){
+        let pageNr = '?page='+currentPage;
+        if (searchValue !== ""){
+            console.log("Filtering items...")
             url = url+searchValue+'/';
         }
+        url = url + pageNr;
         const response = await fetch(url);
         if (!response.ok){
             throw new Error("API fetch error: " + response.statusCode)
@@ -172,6 +179,10 @@ function ShopComponent() {
                     )
                 )
             }
+            if (data) {
+                // update totalPages variable
+                setTotalPages(Math.ceil(data.count / ITEMS_PER_PAGE))
+            }
         }).catch(err => console.log("Error: ", err))
     }
 
@@ -179,10 +190,16 @@ function ShopComponent() {
         setSearchValue(search)
     }
 
+    const pageNumberHandler = (nr) => {
+        if (nr >= 0 && nr <= totalPages) {
+            setCurrentPage(nr)
+        }
+    }
+
     // do whenever refresh
     useEffect(() => {
         refreshPage();
-    }, [refreshPage])
+    }, [searchValue])  // setting dependency to "refreshPage()" as IDE suggests causes a recursion, slowing down the website
 
     return (
         <div className={"shop"}>
@@ -195,12 +212,11 @@ function ShopComponent() {
                 </div>
             }
             <div>
-                <ShopItemContainer items={items}></ShopItemContainer>
+                <ShopItemContainer items={items} totalPages={totalPages} pageNumberHandler={pageNumberHandler} currentPage={currentPage}></ShopItemContainer>
                 {/*<button onClick={() => APIFetchShopItems}>Fetch shop items from API</button>*/}
                 {/* TODO: fix this: <button onClick={() => PopulateDB()}>Populate database with new users and items</button> */}
             </div>
-
-            <div style={{height: '8000px'}}></div>
+            <div style={{height: '2000px'}}></div>
             <div style={{margin: '10px'}}>
                 <h1>Congrats! You made it all the way down, have some more cat memes:</h1>
                 <div style={{display: "flex", flexWrap: 'wrap', margin: '10px'}}>

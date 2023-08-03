@@ -26,7 +26,7 @@ GET http://localhost:8000/api/v1/auth/users/
 
 ###
 
-GET http://127.0.0.1:8000/api/v1/shopItems/bag/
+GET http://127.0.0.1:8000/api/v1/shopItems/Ba/
 
 ###
 

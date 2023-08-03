@@ -1,6 +1,7 @@
 import random
 
 from rest_framework.views import APIView
+from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from WebShopApp.models import ShopItem
 from WebShopApp.api.serializers import ShopItemSerializer
@@ -11,18 +12,24 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly, AllowAny
 from rest_framework.authentication import TokenAuthentication
 
 
-class ShopItemListAPI_V1(GenericAPIView):
+class ShopItemPagination(PageNumberPagination):
+    page_size = 10  # Number of items per page
+
+class ShopItemListAPI_V1(ListAPIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
     authentication_classes = [TokenAuthentication]
+    pagination_class = ShopItemPagination
+    serializer_class = ShopItemSerializer
+    queryset = ShopItem.objects.filter(sold=False).order_by('date').reverse()
 
-    def get(self, request):
-        shopItems = ShopItem.objects.filter(sold=False).order_by('date').reverse()
-        page = self.paginate_queryset(shopItems)
-        if page:
-            serializer = ShopItemSerializer(shopItems, many=True)
+    def list(self, request, *args, **kwargs):
+        querySet = self.filter_queryset(self.get_queryset())
+        page = self.paginate_queryset(querySet)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
             return self.get_paginated_response(serializer.data)
-        else:  # page is empty
-            return self.get_paginated_response({})
+
+        return Response([])  # nothing on page
 
     def post(self, request):
         serializer = ShopItemSerializer(data=request.data)
@@ -38,19 +45,22 @@ class ShopItemListAPI_V1(GenericAPIView):
         return Response({"message": "Item added!"})
 
 
-class FilteredShopItemListAPI(GenericAPIView):
+class FilteredShopItemListAPI(ListAPIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
     authentication_classes = [TokenAuthentication]
+    pagination_class = ShopItemPagination
+    serializer_class = ShopItemSerializer
+    queryset = ShopItem.objects.filter(sold=False).order_by('date').reverse()
 
     def get(self, request, *args, **kwargs):
         searchTerm = self.kwargs.get('searchTerm', '')
-        shopItems = ShopItem.objects.filter(sold=False).filter(name__icontains=searchTerm).order_by('date').reverse()
-        page = self.paginate_queryset(shopItems)
+        querySet = self.get_queryset().filter(name__icontains=searchTerm)
+        page = self.paginate_queryset(querySet)
         if page:
-            serializer = ShopItemSerializer(shopItems, many=True)
+            serializer = self.get_serializer(page, many=True)
             return self.get_paginated_response(serializer.data)
-        else:  # page is empty
-            return self.get_paginated_response({})
+
+        return Response([])
 
 
 class ShopItemDetailAPI_V1(GenericAPIView):
