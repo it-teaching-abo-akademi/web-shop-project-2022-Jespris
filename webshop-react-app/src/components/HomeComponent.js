@@ -5,7 +5,7 @@ import stocksGraph from '../assets/stocksGraph.png';
 import cashHand from '../assets/cashHand.png';
 import {SERVER_URL} from "../App.js";
 
-function HomeComponent() {
+function HomeComponent(props) {
 
     const POPULATE_DB = SERVER_URL + 'api/v1/populateDB/';
 
@@ -70,6 +70,7 @@ function HomeComponent() {
     const resetDBHandler = () => {
         localStorage.removeItem('username')
         localStorage.removeItem('authToken')
+        props.handleLogout();
         PopulateDB();
         setDBReset(true)
     }

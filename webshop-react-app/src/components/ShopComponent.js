@@ -1,7 +1,6 @@
 import {useEffect, useState} from "react";
 import ShopItem from "./ShopItem";
 import TopBarContainer from "./TopBarContainer";
-import InputForm from "./inputForm";
 import ShopItemContainer from "./ShopItemContainer";
 import catJam from '../assets/catjam.gif';
 import moneyCat from '../assets/moneyCat.gif';
@@ -49,28 +48,6 @@ function ShopComponent({username}) {
         <ShopItem key={index} shopItem={value} addCartItemHandler={addCartItem} loggedInUser={username}></ShopItem>
     ))
 
-    const apiFetchPost = (name, description, price) => {
-        console.log("Posting shop item '", name, "' to API")
-        fetch(SHOP_ITEM_API_URL, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',  // Auth token hopefully set in App.js
-                'Authorization': 'Token ' + localStorage.getItem('authToken')
-            },
-            body: JSON.stringify({name: name, description: description, price: price, username: username})
-        }).then(
-            response => {
-                if(!response.ok) {
-                    throw new Error("API posting error: " + response.statusCode);
-                }
-                return response.json();
-            }
-        ).then(data => {
-            console.log("DATA: ", data)
-            APIFetchShopItems();
-        }).catch(err => console.log("Error: ", err))
-    }
-
     const APIFetch = async () => {
         let url = SHOP_ITEM_API_URL;
         let pageNr = '?page='+currentPage;
@@ -86,15 +63,6 @@ function ShopComponent({username}) {
         const data = await response.json();
         console.log("Shop items data: ", data);
         return data;
-    }
-
-    const APIFetchShopItems = () => {
-        console.log("Fetching shop items...")
-        APIFetch().then(data => setShopItems(
-            (prev => data.results.map(
-                p => new ItemInShop(p.name, p.description, p.price, p.username, p.date)))))
-            .catch(err => console.log("Error: ", err))
-        console.log("DONE fetching shop items!")
     }
 
     const refreshPage = () => {
@@ -136,11 +104,6 @@ function ShopComponent({username}) {
             <div>
                 <TopBarContainer cartItems={cartItems} deleteCartItemHandler={deleteCartItemHandler} deleteCartHandler={deleteCartHandler} searchFormHandler={searchFormHandler}></TopBarContainer>
             </div>
-            {username &&
-                <div>
-                    <InputForm text={"Add shop item to database"} inputFormHandler={apiFetchPost}></InputForm>
-                </div>
-            }
             <div>
                 <ShopItemContainer items={items} totalPages={totalPages} pageNumberHandler={pageNumberHandler} currentPage={currentPage}></ShopItemContainer>
                 {/*<button onClick={() => APIFetchShopItems}>Fetch shop items from API</button>*/}

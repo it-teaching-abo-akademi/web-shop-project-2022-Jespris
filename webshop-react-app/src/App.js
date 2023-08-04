@@ -18,6 +18,10 @@ function App() {
         localStorage.removeItem('csrfToken')
         localStorage.removeItem('authToken')
         localStorage.removeItem('username')
+
+        setUsername(null)
+        setCSRFToken(null)
+        setAuthToken(null)
     }
 
     const fetchCSRFToken = () => {
@@ -35,11 +39,16 @@ function App() {
         }).catch(error => {
             console.error("Error fetching CSRF token", error);
         });
+
+        setUsername(localStorage.getItem('username'))
+        setAuthToken(localStorage.getItem('authToken'))
+        setCSRFToken(localStorage.getItem('csrfToken'))
     }
 
     const [csrfToken, setCSRFToken] = useState(null);
     const [username, setUsername] = useState(null);
     const [authToken, setAuthToken] = useState(null)
+
 
     useEffect(() => {
         console.log("App state update")
@@ -61,7 +70,7 @@ function App() {
                 }
             ).then(data => {
                 console.log("DATA: ", data)
-                if (data.username === username){
+                if (data.username === username) {
                     console.log("User found!")
                 } else {
                     console.log("User not found, logging out...")
@@ -71,10 +80,6 @@ function App() {
                 }
             })
         }
-
-        setUsername(localStorage.getItem('username'))
-        setAuthToken(localStorage.getItem('authToken'))
-        setCSRFToken(localStorage.getItem('csrfToken'))
 
         console.log("Username from storage: ", username)
         console.log("CSRF from storage: ", csrfToken)
@@ -86,7 +91,7 @@ function App() {
             axios.defaults.headers.common['X-CSRFToken'] = csrfToken;
             axios.defaults.headers.common['Authorization'] = 'Token ' + authToken;
         }
-    }, [username, authToken, csrfToken])
+    }, [])
 
       return (
           <div style={{margin: '10px', fontFamily: "Comic Sans MS"}}>
@@ -98,10 +103,19 @@ function App() {
                       <div className={"menu"}>
                           <NavLink className={"menu-item"} to="/">Home</NavLink>
                           <NavLink className={"menu-item"} to="/shop">Shop</NavLink>
-                          <NavLink className={"menu-item"} to="/signup">Sign Up</NavLink>
-                          <NavLink className={"menu-item"} to="/login">Login</NavLink>
+                          {!username &&
+                              <NavLink className={"menu-item"} to="/signup">Sign Up</NavLink>
+
+                          }
+                          {!username &&
+                                <NavLink className={"menu-item"} to="/login">Login</NavLink>
+                          }
                           {username &&
                               <div style={{display: 'flex'}}>
+                                  <h4 className={"menu-item"}>
+                                      {username}
+                                  </h4>
+
                                   <NavLink className={"menu-item"} to="/account">Account</NavLink>
                                   <NavLink className={"menu-item"} to="/myitems">My items</NavLink>
                                   <NavLink className={"menu-item"} to="/login" onClick={handleLogout}>Log out</NavLink>
@@ -110,7 +124,7 @@ function App() {
                       </div>
                   </div>
                   <Routes>
-                      <Route path="/" element={<HomeComponent/>}/>
+                      <Route path="/" element={<HomeComponent handleLogout={handleLogout}/>}/>
                       <Route path="/shop" element={<ShopComponent username={username}/>}/>
                       <Route path="/signup" element={<SignUpComponent/>}/>
                       <Route path="/login" element={<LoginComponent handleLogin={handleLogin}/>}/>
