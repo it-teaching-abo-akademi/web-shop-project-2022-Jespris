@@ -4,14 +4,14 @@ web-shop-project-2022-Jespris created by GitHub Classroom
 Project created by Jesper Andersson, jesper.j.andersson@abo.fi 
 
 Requirements implemented:
-Everything hopefully! 13/24 Mandatory points, 8/16 optional points
+Everything hopefully! 21/24 Mandatory points, 8/16 optional points
 
 Functional Requirements
 
 1. Site architecture (MANDATORY) (4p)
-2. Automatic Db population (MANDATORY) (TODO: move to landing page, bugged) (2p)
-3. Browse (MANDATORY) (TODO: Pagination) (3p)
-4. Search (TODO: Pagination) (3p)
+2. Automatic Db population (MANDATORY) (2p)
+3. Browse (MANDATORY) (3p)
+4. Search (3p)
 5. Create account (MANDATORY) (2p)
 6. Login (MANDATORY) (2p)
 7. Add item (MANDATORY) (2p)
