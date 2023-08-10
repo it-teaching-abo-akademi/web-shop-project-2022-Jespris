@@ -91,7 +91,7 @@ function App() {
             axios.defaults.headers.common['X-CSRFToken'] = csrfToken;
             axios.defaults.headers.common['Authorization'] = 'Token ' + authToken;
         }
-    }, [authToken, csrfToken, username])
+    }, [])
 
       return (
           <div style={{margin: '10px', fontFamily: "Comic Sans MS"}}>
@@ -129,7 +129,7 @@ function App() {
                       <Route path="/signup" element={<SignUpComponent/>}/>
                       <Route path="/login" element={<LoginComponent handleLogin={handleLogin}/>}/>
                       <Route path="/account" element={<AccountComponent/>}/>
-                      <Route path="/myitems" element={<MyItemsComponent username={username} authToken={authToken}/>}/>
+                      <Route path="/myitems" element={<MyItemsComponent/>}/>
                   </Routes>
               </BrowserRouter>
           </div>
