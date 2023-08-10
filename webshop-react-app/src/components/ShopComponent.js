@@ -100,14 +100,13 @@ function ShopComponent({username}) {
     }, [searchValue, currentPage])  // setting dependency to "refreshPage()" as IDE suggests causes a recursion, slowing down the website
 
     return (
-        <div className={"shop"}>
+        <div style={{zIndex: '3'}}>
             <div>
                 <TopBarContainer cartItems={cartItems} deleteCartItemHandler={deleteCartItemHandler} deleteCartHandler={deleteCartHandler} searchFormHandler={searchFormHandler}></TopBarContainer>
             </div>
             <div>
                 <ShopItemContainer items={items} totalPages={totalPages} pageNumberHandler={pageNumberHandler} currentPage={currentPage}></ShopItemContainer>
                 {/*<button onClick={() => APIFetchShopItems}>Fetch shop items from API</button>*/}
-                {/* TODO: fix this: <button onClick={() => PopulateDB()}>Populate database with new users and items</button> */}
             </div>
             <div style={{height: '2000px'}}></div>
             <div style={{margin: '10px'}}>

@@ -11,12 +11,35 @@ function MyShopItem(props) {
         display: 'flex'
     }
 
-    return (
-        <div style={shopItemStyle}>
-            <ShopItemInfo shopItem={props.shopItem} editItemHandler={props.editItemHandler}></ShopItemInfo>
-            <ShopItemImage image={props.image}></ShopItemImage>
-        </div>
-    )
+    if (props.itemStyle === "forSale"){
+        return (
+            <div style={shopItemStyle}>
+                <ShopItemInfo shopItem={props.shopItem} has_button={true} editItemHandler={props.editItemHandler} flavourText={null}></ShopItemInfo>
+                <ShopItemImage image={props.image}></ShopItemImage>
+            </div>
+        )
+    } else if (props.itemStyle === "soldItems"){
+        return (
+            <div style={shopItemStyle}>
+                <ShopItemInfo shopItem={props.shopItem} has_button={false} flavourText={"SOLD"}></ShopItemInfo>
+                <ShopItemImage image={props.image}></ShopItemImage>
+            </div>
+        )
+    } else if (props.itemStyle === "purchasedItems"){
+        return (
+            <div style={shopItemStyle}>
+                <ShopItemInfo shopItem={props.shopItem} has_button={false} flavourText={"PURCHASED BY YOU"}></ShopItemInfo>
+                <ShopItemImage image={props.image}></ShopItemImage>
+            </div>
+        )
+    } else {
+        return (
+            <div style={shopItemStyle}>
+                <ShopItemInfo shopItem={props.shopItem} has_button={false} flavourText={null}></ShopItemInfo>
+                <ShopItemImage image={props.image}></ShopItemImage>
+            </div>
+        )
+    }
 }
 
 function ShopItemInfo(props) {
@@ -39,9 +62,16 @@ function ShopItemInfo(props) {
                 <h3>
                     {name}
                 </h3>
-                <div style={{marginLeft: 'auto', marginRight: '10px'}}>
-                    <button onClick={() => props.editItemHandler}>Edit</button>
-                </div>
+                {props.has_button &&
+                    <div style={{marginLeft: 'auto', marginRight: '10px'}}>
+                        <button onClick={() => props.editItemHandler(props.shopItem)}>Edit</button>
+                    </div>
+                }
+                {props.flavourText !== null &&
+                    <div style={{marginLeft: 'auto', marginRight: '10px', color: 'red'}}>
+                        {props.flavourText}
+                    </div>
+                }
             </div>
             <div style={{textAlign: 'left'}}>
                 <b>Description: </b>{description}
