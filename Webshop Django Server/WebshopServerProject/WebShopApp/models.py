@@ -12,3 +12,4 @@ class ShopItem(models.Model):
     date = models.DateTimeField(auto_now_add=True)
     sold = models.BooleanField(default=False)
     version = models.IntegerField(default=0)
+    purchased_by = models.CharField(max_length=50, default="default user")

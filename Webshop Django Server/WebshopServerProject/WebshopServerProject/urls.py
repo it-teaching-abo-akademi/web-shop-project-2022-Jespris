@@ -23,5 +23,5 @@ urlpatterns = [
 
     # REST API endpoints
     path('api/v1/', include('WebShopApp.api.urls')),
-    path('api/v1/auth/', include('account.api.urls'))
+    path('api/v1/', include('account.api.urls'))
 ]
