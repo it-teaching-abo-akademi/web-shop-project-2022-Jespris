@@ -10,12 +10,13 @@ import {SERVER_URL} from "../App";
 
 function ShopComponent({username}) {
     class ItemInShop {
-        constructor(name, description, price, username, date) {
+        constructor(name, description, price, username, date, version) {
             this.name = name;
             this.description = description;
             this.price = price;
             this.username = username;
             this.date = date;
+            this.version = version;
         }
     }
 
@@ -40,12 +41,18 @@ function ShopComponent({username}) {
         setCartItems([])
     }
 
-    const addCartItem = (name, price) => {
-        setCartItems(prevState => [...prevState, [name, price]])
+    const addCartItem = (name, price, username, version, stateChange) => {
+        setCartItems(prevState => [...prevState, [name, price, username, version, stateChange]])
     }
 
     items = shopItems.map((value, index) => (
-        <ShopItem key={index} shopItem={value} addCartItemHandler={addCartItem} loggedInUser={username}></ShopItem>
+        <ShopItem
+            key={index}
+            shopItem={value}
+            addCartItemHandler={addCartItem}
+            loggedInUser={username}
+            cartItems={cartItems}
+        ></ShopItem>
     ))
 
     const APIFetch = async () => {
@@ -72,7 +79,7 @@ function ShopComponent({username}) {
             if (data && Array.isArray(data.results)) {
                 setShopItems(
                 prevState => data.results.map(
-                    p => new ItemInShop(p.name, p.description, p.price, p.username, p.date)
+                    p => new ItemInShop(p.name, p.description, p.price, p.username, p.date, p.version)
                     )
                 )
             }
@@ -102,10 +109,18 @@ function ShopComponent({username}) {
     return (
         <div style={{zIndex: '3'}}>
             <div>
-                <TopBarContainer cartItems={cartItems} deleteCartItemHandler={deleteCartItemHandler} deleteCartHandler={deleteCartHandler} searchFormHandler={searchFormHandler}></TopBarContainer>
+                <TopBarContainer searchFormHandler={searchFormHandler}></TopBarContainer>
             </div>
             <div>
-                <ShopItemContainer items={items} totalPages={totalPages} pageNumberHandler={pageNumberHandler} currentPage={currentPage}></ShopItemContainer>
+                <ShopItemContainer
+                    items={items}
+                    totalPages={totalPages}
+                    pageNumberHandler={pageNumberHandler}
+                    currentPage={currentPage}
+                    cartItems={cartItems}
+                    deleteCartItemHandler={deleteCartItemHandler}
+                    deleteCartHandler={deleteCartHandler}
+                />
                 {/*<button onClick={() => APIFetchShopItems}>Fetch shop items from API</button>*/}
             </div>
             <div style={{height: '2000px'}}></div>

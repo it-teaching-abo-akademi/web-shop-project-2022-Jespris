@@ -1,10 +1,11 @@
+import {useEffect, useState} from "react";
 
 
 function ShopItem(props) {
     const shopItemStyle = {
-        width: '40vm',
-        maxWidth: '800px',
-        minWidth: '400px',
+        width: '30vm',
+        maxWidth: '600px',
+        minWidth: '300px',
         height: '200px',
         margin: '10px',
         border: 'solid 1px black',
@@ -13,7 +14,12 @@ function ShopItem(props) {
 
     return (
         <div style={shopItemStyle}>
-            <ShopItemInfo loggedInUser={props.loggedInUser} shopItem={props.shopItem} addCartItemHandler={props.addCartItemHandler}></ShopItemInfo>
+            <ShopItemInfo
+                loggedInUser={props.loggedInUser}
+                shopItem={props.shopItem}
+                addCartItemHandler={props.addCartItemHandler}
+                cartItems={props.cartItems}>
+            </ShopItemInfo>
             <ShopItemImage image={props.image}></ShopItemImage>
         </div>
     )
@@ -32,6 +38,28 @@ function ShopItemInfo(props) {
     const description = props.shopItem.description;
     const username = props.shopItem.username;
     const date = new Date(props.shopItem.date).toUTCString()
+    const version = props.shopItem.version;
+    const stateChange = props.shopItem.stateChange;
+
+    const [inCart, setInCart] = useState(false);
+
+    useEffect(() => {
+        setInCart(
+            props.cartItems.some(item => {
+                console.log("Item: ", item)
+                const [itemName, itemPrice, itemUsername, itemVersion, itemStateChange] = item;
+                return itemName === name && itemPrice === price && itemUsername === username;
+            })
+        )
+    }, [name, price, props.cartItems, username])
+
+
+
+    const itemStateStyle = {
+        marginLeft: 'auto',
+        marginRight: '10px'
+    }
+
 
     return (
         <div style={infoStyle}>
@@ -39,16 +67,21 @@ function ShopItemInfo(props) {
                 <h3>
                     {name}
                 </h3>
-                {(props.loggedInUser !== username && props.loggedInUser) &&
-                    <div style={{marginLeft: 'auto', marginRight: '10px'}}>
-                        <button onClick={() => props.addCartItemHandler(name, price)}>Add to cart</button>
+                {(props.loggedInUser !== username && props.loggedInUser && !inCart) &&
+                    <div style={itemStateStyle}>
+                        <button onClick={() => props.addCartItemHandler(name, price, username, version)}>Add to cart</button>
                     </div>
                 }
                 {(props.loggedInUser === username) &&
-                    <div style={{marginLeft: 'auto', marginRight: '10px'}}>
+                    <div style={itemStateStyle}>
                         <i>You own this item</i>
                     </div>
                 }
+                {inCart && (
+                    <div style={itemStateStyle}>
+                        <i>Item is in cart</i>
+                    </div>
+                )}
             </div>
             <div style={{textAlign: 'left'}}>
                 <b>Description: </b>{description}
@@ -65,7 +98,7 @@ function ShopItemInfo(props) {
 
 function ShopItemImage(props) {
     const imageStyle = {
-        width: '50em',
+        width: '30em',
         height: '190px',
         image: '',
         border: '1px black solid',
