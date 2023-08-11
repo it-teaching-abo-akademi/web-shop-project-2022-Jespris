@@ -125,7 +125,7 @@ function App() {
                   </div>
                   <Routes>
                       <Route path="/" element={<HomeComponent handleLogout={handleLogout}/>}/>
-                      <Route path="/shop" element={<ShopComponent username={username}/>}/>
+                      <Route path="/shop" element={<ShopComponent username={username} authToken={authToken}/>}/>
                       <Route path="/signup" element={<SignUpComponent/>}/>
                       <Route path="/login" element={<LoginComponent handleLogin={handleLogin}/>}/>
                       <Route path="/account" element={<AccountComponent/>}/>

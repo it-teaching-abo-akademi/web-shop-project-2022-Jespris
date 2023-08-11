@@ -2,6 +2,7 @@ import attackCat from "../assets/attackCat.gif";
 import {useState} from "react";
 import shoppingCart from "../assets/shoppingCart.png";
 import {SERVER_URL} from "../App";
+import {redirect} from "react-router-dom";
 
 function ShopItemContainer(props) {
     const shopContainerStyle = {
@@ -67,7 +68,7 @@ function ShopItemContainer(props) {
                     </div>
                 </div>
             </div>
-            <ShoppingCart cartItems={props.cartItems} deleteCartItemHandler={props.deleteCartItemHandler} deleteCartHandler={props.deleteCartHandler}></ShoppingCart>
+            <ShoppingCart cartItems={props.cartItems} deleteCartItemHandler={props.deleteCartItemHandler} deleteCartHandler={props.deleteCartHandler} authToken={props.authToken} username={props.username}></ShoppingCart>
         </div>
     )
 }
@@ -131,6 +132,7 @@ function ShoppingCart(props) {
         }
 
         // TODO: Show user total success and close cart?
+        // - refresh
     }
 
     const buyItemHandler = async(cartItem) => {
@@ -143,9 +145,38 @@ function ShoppingCart(props) {
             // item has been updated since last page refresh
             console.log("Version difference... checking differences")
             // TODO: check what has changed and set cartItem[4] (the stateChange variable) to a suitable text string
+            // React and Javascript variables are passed by reference
+            if (data['price'] !== cartItem[1]){
+                cartItem[4] = "Price changed from " + cartItem[1] + " to "
+                cartItem[1] = data['price'];
+            } else if (data['sold']){
+                cartItem[4] = "NOT AVAILABLE"
+            }
+            // update the rest of the data
+            cartItem[0] = data['name']
+            cartItem[3] = data['version']
             return false;  // unsuccessful
         } else {
             // Everything is in order (hopefully)
+            // TODO: set sold to true and update version
+            fetch(`${SERVER_URL}api/v1/shopItems/buy/${data['pk']}/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Token ' + props.authToken
+                },
+                body: JSON.stringify({
+                    username: props.username
+                })
+            }).then(
+                response => {
+                    if (!response.ok) {
+                        throw new Error("Failed to buy item.. " + response.statusCode)
+                    }
+                    return response.json()
+                }
+            ).catch(err => console.log("ERROR: ", err))
+            redirect('http://localhost:3000/shop')
             return true;  // success
         }
     }
@@ -175,7 +206,7 @@ function ShoppingCart(props) {
                     {props.cartItems.map((value, i) => (
                         <li key={i} style={{display: 'flex'}}>
                             <div>
-                                {value[0]}: <b>{value[1]}€</b>
+                                {value[0]},{value[4]} <b>{value[1]}€</b>
                             </div>
                             <div style={{marginLeft: 'auto', marginRight: '0px'}}>
                                 <button  onClick={() => props.deleteCartItemHandler(i)}>x</button>

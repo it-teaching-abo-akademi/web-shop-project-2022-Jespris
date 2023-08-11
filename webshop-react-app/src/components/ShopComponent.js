@@ -8,7 +8,7 @@ import doorCat from '../assets/doorCat.gif';
 import aggroLickCat from '../assets/aggressiveLickCat.gif';
 import {SERVER_URL} from "../App";
 
-function ShopComponent({username}) {
+function ShopComponent({username, authToken}) {
     class ItemInShop {
         constructor(name, description, price, username, date, version) {
             this.name = name;
@@ -120,6 +120,8 @@ function ShopComponent({username}) {
                     cartItems={cartItems}
                     deleteCartItemHandler={deleteCartItemHandler}
                     deleteCartHandler={deleteCartHandler}
+                    authToken={authToken}
+                    username={username}
                 />
                 {/*<button onClick={() => APIFetchShopItems}>Fetch shop items from API</button>*/}
             </div>

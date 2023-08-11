@@ -8,7 +8,7 @@ from WebShopApp.api.serializers import ShopItemSerializer
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.authentication import TokenAuthentication
-
+from django.shortcuts import get_object_or_404
 
 class ShopItemPagination(PageNumberPagination):
     page_size = 10  # Number of items per page
@@ -108,3 +108,18 @@ class ShopItemUpdateAPI_V1(generics.UpdateAPIView):
     queryset = ShopItem.objects.all()
     serializer_class = ShopItemSerializer
 
+
+class BuyShopItemAPI_V1(APIView):
+    permission_classes = [IsAuthenticatedOrReadOnly]
+    authentication_classes = [TokenAuthentication]
+    serializer_class = ShopItemSerializer
+
+    def post(self, request, *args, **kwargs):
+        itemID = self.kwargs.get('itemID', '')
+        purchasedBy = request.data['username']  # IDK if this works
+        shopItem = get_object_or_404(ShopItem, pk=itemID)
+        shopItem.sold = True
+        shopItem.purchased_by = purchasedBy
+        shopItem.version += 1
+        shopItem.save()
+        return Response({"message": "Item bought!"})

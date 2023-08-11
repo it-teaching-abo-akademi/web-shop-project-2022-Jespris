@@ -39,7 +39,6 @@ function ShopItemInfo(props) {
     const username = props.shopItem.username;
     const date = new Date(props.shopItem.date).toUTCString()
     const version = props.shopItem.version;
-    const stateChange = props.shopItem.stateChange;
 
     const [inCart, setInCart] = useState(false);
 
