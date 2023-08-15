@@ -137,7 +137,7 @@ function ShoppingCart(props) {
 
     const buyItemHandler = async(cartItem) => {
         // get the item ID to buy
-        const response = await fetch(`${SERVER_URL}api/v1/shopItems/${cartItem[0]}/${cartItem[1]}/${cartItem[2]}/`)
+        const response = await fetch(`${SERVER_URL}/api/v1/shopItems/${cartItem[0]}/${cartItem[1]}/${cartItem[2]}/`)
         console.log(response);
         const data = await response.json();
         console.log("Item data: ", data)
@@ -159,7 +159,7 @@ function ShoppingCart(props) {
         } else {
             // Everything is in order (hopefully)
             // TODO: set sold to true and update version
-            fetch(`${SERVER_URL}api/v1/shopItems/buy/${data['pk']}/`, {
+            fetch(`${SERVER_URL}/api/v1/shopItems/buy/${data['pk']}/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

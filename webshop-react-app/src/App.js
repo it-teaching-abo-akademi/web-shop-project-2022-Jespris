@@ -10,7 +10,7 @@ import './menu.css';
 import axios from "axios";
 import {useEffect, useState} from "react";
 
-export const SERVER_URL = 'http://localhost:8011/'
+export const SERVER_URL = 'http://localhost:8011'
 
 function App() {
 
@@ -25,7 +25,7 @@ function App() {
     }
 
     const fetchCSRFToken = () => {
-        return fetch(SERVER_URL + 'api/v1/csrfToken/')
+        return fetch(SERVER_URL + '/api/v1/csrfToken/')
             .then(response => response.json())
             .then(data => data.csrfToken);
     }
@@ -52,10 +52,13 @@ function App() {
 
     useEffect(() => {
         console.log("App state update")
+        setUsername(localStorage.getItem('username'))
+        setAuthToken(localStorage.getItem('authToken'))
+        setCSRFToken(localStorage.getItem('csrfToken'))
         // TODO: validate login token
         if (username && authToken) {
             console.log("Validating user token from local storage...")
-            fetch(SERVER_URL + 'api/v1/auth/users/', {
+            fetch(SERVER_URL + '/api/v1/auth/users/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',  // Auth token hopefully set in App.js

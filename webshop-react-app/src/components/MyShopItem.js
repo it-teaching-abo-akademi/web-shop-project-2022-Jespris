@@ -1,3 +1,4 @@
+import {SERVER_URL} from "../App";
 
 
 function MyShopItem(props) {
@@ -15,28 +16,28 @@ function MyShopItem(props) {
         return (
             <div style={shopItemStyle}>
                 <ShopItemInfo shopItem={props.shopItem} has_button={true} editItemHandler={props.editItemHandler} flavourText={null}></ShopItemInfo>
-                <ShopItemImage image={props.image}></ShopItemImage>
+                <ShopItemImage image={props.shopItem.image}></ShopItemImage>
             </div>
         )
     } else if (props.itemStyle === "soldItems"){
         return (
             <div style={shopItemStyle}>
                 <ShopItemInfo shopItem={props.shopItem} has_button={false} flavourText={"SOLD"}></ShopItemInfo>
-                <ShopItemImage image={props.image}></ShopItemImage>
+                <ShopItemImage image={props.shopItem.image}></ShopItemImage>
             </div>
         )
     } else if (props.itemStyle === "purchasedItems"){
         return (
             <div style={shopItemStyle}>
                 <ShopItemInfo shopItem={props.shopItem} has_button={false} flavourText={"PURCHASED BY YOU"}></ShopItemInfo>
-                <ShopItemImage image={props.image}></ShopItemImage>
+                <ShopItemImage image={props.shopItem.image}></ShopItemImage>
             </div>
         )
     } else {
         return (
             <div style={shopItemStyle}>
                 <ShopItemInfo shopItem={props.shopItem} has_button={false} flavourText={null}></ShopItemInfo>
-                <ShopItemImage image={props.image}></ShopItemImage>
+                <ShopItemImage image={props.shopItem.image}></ShopItemImage>
             </div>
         )
     }
@@ -88,7 +89,7 @@ function ShopItemInfo(props) {
 
 function ShopItemImage(props) {
     const imageStyle = {
-        width: '50em',
+        width: '190px',
         height: '190px',
         image: '',
         border: '1px black solid',
@@ -96,9 +97,11 @@ function ShopItemImage(props) {
         position: 'relative'
     }
 
-    imageStyle.image = props.image;
-
-    return <div style={imageStyle}></div>
+    return (
+        <div style={imageStyle}>
+            <img src={`${SERVER_URL}${props.image}`} alt="Item image" style={{width: '190px', height: '190px'}}></img>
+        </div>
+    )
 }
 
 export default MyShopItem;

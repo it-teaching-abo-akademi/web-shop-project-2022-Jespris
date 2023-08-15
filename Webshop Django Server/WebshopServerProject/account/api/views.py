@@ -75,26 +75,26 @@ class PopulateDB(APIView):
 
         # random items to populate with
         all_items = {
-            "T-shirt": "Plain white T-Shirt",
-            "Smartphone": "Old, barely working phone with cracked screen",
-            "Laptop": "This laptop is from 2005 but works like a charm 100% of the time, 20% of the time",
-            "Shoes": "Smells nice",
-            "Book": "This book is 690 pages long and boring",
-            "Watch": "You would look very cool in this watch",
-            "Headphones": "Left earphone is broken",
-            "Jewelry": "Shiny!",
-            "Handbag": "Totally legit not counterfit Gucci handbag",
-            "Sunglasses": "Cool guys wear sunglasses, are you a cool guy?",
-            "Camera": "Very good selfie machine",
-            "Toys": "Toys for 3-6 year olds",
-            "Painting": "A painting I made myself, please support your local artists",
-            "Toaster": "It's a toaster that works, what more could you want",
-            "Yoga mat": "I broke my leg so I can no longer do the splits",
-            "FIFA 19": "Please continue my save game",
-            "Make-up bag": "I found this at my local club",
-            "Phone charger": "This cable doesn't work but I guarantee it is of some use to someone probably",
-            "Coffee table": "I spilled coffee on it",
-            "Scratch tree for cat": "Your cat will love it!"
+            "T-shirt": ("Plain white T-Shirt", "t-shirt.jpg"),
+            "Smartphone": ("Old, barely working phone with cracked screen", "phone.jpg"),
+            "Laptop": ("This laptop is from 2005 but works like a charm 100% of the time, 20% of the time", "laptop.jpg"),
+            "Shoes": ("Smells nice", "shoes.jpg"),
+            "Book": ("This book is 690 pages long and boring", "book.jpg"),
+            "Watch": ("You would look very cool in this watch", "watch.jpg"),
+            "Headphones": ("Left earphone is broken", "headphones.jpg"),
+            "Jewelry": ("Shiny!", "jewelry.jpg"),
+            "Handbag": ("Totally legit not counterfit Gucci handbag", "handbag.jpg"),
+            "Sunglasses": ("Cool guys wear sunglasses, are you a cool guy?", "sunglasses.jpg"),
+            "Camera": ("Very good selfie machine", "camera.jpg"),
+            "Toys": ("Toys for 3-6 year olds", "toys.jpg"),
+            "Painting": ("A painting I made myself, please support your local artists", "painting.jpg"),
+            "Toaster": ("It's a toaster that works, what more could you want", "notImplemented.png"),
+            "Yoga mat": ("I broke my leg so I can no longer do the splits", "notImplemented.png"),
+            "FIFA 19": ("Please continue my save game", "notImplemented.png"),
+            "Make-up bag": ("I found this at my local club", "notImplemented.png"),
+            "Phone charger": ("This cable doesn't work but I guarantee it is of some use to someone probably", "notImplemented.png"),
+            "Coffee table": ("I spilled coffee on it", "notImplemented.png"),
+            "Scratch tree for cat": ("Your cat will love it!", "notImplemented.png")
         }
 
         # Add users
@@ -113,8 +113,9 @@ class PopulateDB(APIView):
                     key, value = random.choice(list(all_items.items()))
                     name = key
                     price = random.random() * 100
-                    description = value
-                    shopItem = ShopItem(name=name, description=description, price=price, username=user.username)
+                    description = value[0]
+                    image = value[1]
+                    shopItem = ShopItem(name=name, description=description, price=price, username=user.username, image=image)
                     shopItem.save()
 
         print("Users created: ", User.objects.all())

@@ -10,6 +10,7 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.authentication import TokenAuthentication
 from django.shortcuts import get_object_or_404
 
+
 class ShopItemPagination(PageNumberPagination):
     page_size = 10  # Number of items per page
 
@@ -34,12 +35,21 @@ class ShopItemListAPI_V1(ListAPIView):
         serializer = ShopItemSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         data = serializer.validated_data
+
         shopItem = ShopItem(
             name=data["name"],
-            description=data["description"],
             price=float(data["price"]),
             username=data["username"]
+
         )
+
+        if data["description"] != "":
+            shopItem.description = data["description"]
+        if data["image"] is not None:
+            shopItem.image = data["image"]
+        else:
+            shopItem.image = 'notImplemented.png'
+
         shopItem.save()
         return Response({"message": "Item added!"})
 

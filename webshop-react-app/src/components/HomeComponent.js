@@ -7,7 +7,7 @@ import {SERVER_URL} from "../App.js";
 
 function HomeComponent(props) {
 
-    const POPULATE_DB = SERVER_URL + 'api/v1/populateDB/';
+    const POPULATE_DB = SERVER_URL + '/api/v1/populateDB/';
 
     const HomeContainer = {
         margin: '10px',
@@ -45,7 +45,7 @@ function HomeComponent(props) {
 
     const getItems = async () => {
         try {
-            const r = await fetch(SERVER_URL + 'api/v1/shopItems/');
+            const r = await fetch(SERVER_URL + '/api/v1/shopItems/');
             const data = await r.json();
             setItems(data.results);
             setNrItems(data.count)
@@ -57,7 +57,7 @@ function HomeComponent(props) {
 
     const getUsers = async () => {
         try {
-            const response = await fetch(SERVER_URL + 'api/v1/auth/users/');
+            const response = await fetch(SERVER_URL + '/api/v1/auth/users/');
             // console.log(data);
             const data = await response.json();
             setUsers(data);

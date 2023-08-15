@@ -41,7 +41,7 @@ function LoginComponent(props) {
 
     const loginFormHandler = async (username, password) => {
         try {
-            const response = await axios.post(SERVER_URL + 'api/v1/auth/login/', {
+            const response = await axios.post(SERVER_URL + '/api/v1/auth/login/', {
                 username,
                 password,
             });

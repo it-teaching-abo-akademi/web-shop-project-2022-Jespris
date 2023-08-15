@@ -10,17 +10,18 @@ import {SERVER_URL} from "../App";
 
 function ShopComponent({username, authToken}) {
     class ItemInShop {
-        constructor(name, description, price, username, date, version) {
+        constructor(name, description, price, username, date, version, image) {
             this.name = name;
             this.description = description;
             this.price = price;
             this.username = username;
             this.date = date;
             this.version = version;
+            this.image = image;
         }
     }
 
-    const SHOP_ITEM_API_URL = SERVER_URL + 'api/v1/shopItems/';
+    const SHOP_ITEM_API_URL = SERVER_URL + '/api/v1/shopItems/';
 
     let items;
     const [shopItems, setShopItems] = useState([]);
@@ -79,7 +80,7 @@ function ShopComponent({username, authToken}) {
             if (data && Array.isArray(data.results)) {
                 setShopItems(
                 prevState => data.results.map(
-                    p => new ItemInShop(p.name, p.description, p.price, p.username, p.date, p.version)
+                    p => new ItemInShop(p.name, p.description, p.price, p.username, p.date, p.version, p.image)
                     )
                 )
             }

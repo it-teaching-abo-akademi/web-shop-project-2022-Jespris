@@ -12,16 +12,17 @@ function MyItemsComponent({username, authToken, csrfToken}) {
     }
 
     class MyItemInShop {
-        constructor(name, description, price, date, version) {
+        constructor(name, description, price, date, version, image) {
             this.name = name;
             this.description = description;
             this.price = price;
             this.date = date;
             this.version = version;
+            this.image = image;
         }
     }
 
-    const SHOP_ITEM_API_URL = SERVER_URL + 'api/v1/shopItems/byUsername/' + username + '/0/';
+    const SHOP_ITEM_API_URL = SERVER_URL + '/api/v1/shopItems/byUsername/' + username + '/0/';
 
     let itemsForSale;
     let soldItems;
@@ -49,23 +50,23 @@ function MyItemsComponent({username, authToken, csrfToken}) {
     }
 
     const APIFetchSoldItems = async () => {
-        const url = `${SERVER_URL}api/v1/shopItems/byUsername/${username}/1/`
+        const url = `${SERVER_URL}/api/v1/shopItems/byUsername/${username}/1/`
         console.log("Fetching items from: ", url)
         const response = await fetch(url);
         await response.json().then(data => {
             setSoldItems(data.map(
-                p => new MyItemInShop(p.name, p.description, p.price, p.date, p.version)
+                p => new MyItemInShop(p.name, p.description, p.price, p.date, p.version, p.image)
             ))
         }).catch(err => console.log("Error: ", err));
     }
 
     const APIFetchPurchasedItems = async () => {
-        const url = `${SERVER_URL}api/v1/shopItems/byPurchasedBy/${username}/1/`
+        const url = `${SERVER_URL}/api/v1/shopItems/byPurchasedBy/${username}/1/`
         console.log("Fetching items from: ", url)
         const response = await fetch(url);
         await response.json().then(data => {
             setPurchasedItems(data.map(
-                p => new MyItemInShop(p.name, p.description, p.price, p.date, p.version)
+                p => new MyItemInShop(p.name, p.description, p.price, p.date, p.version, p.image)
             ))
         }).catch(err => console.log("Error: ", err));
     }
@@ -75,7 +76,7 @@ function MyItemsComponent({username, authToken, csrfToken}) {
         APIFetch().then(data => {
         setMyItemsForSale(
             (prev => data.map(
-                p => new MyItemInShop(p.name, p.description, p.price, p.date, p.version)
+                p => new MyItemInShop(p.name, p.description, p.price, p.date, p.version, p.image)
             )
             )
         )
@@ -83,15 +84,23 @@ function MyItemsComponent({username, authToken, csrfToken}) {
         console.log("DONE fetching shop items!")
     }
 
-    const apiFetchPost = (name, description, price) => {
+    const apiFetchPost = (name, description, price, image) => {
         console.log("Posting shop item '", name, "' to API")
-        fetch(SERVER_URL + 'api/v1/shopItems/', {
+        console.log("Image provided: ", image)
+
+        const formData = new FormData();
+        formData.append('name', name);
+        formData.append('description', description);
+        formData.append('price', price);
+        formData.append('username', username);
+        formData.append('image', image);
+
+        fetch(SERVER_URL + '/api/v1/shopItems/', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',  // Auth token hopefully set in App.js
                 'Authorization': 'Token ' + authToken
             },
-            body: JSON.stringify({name: name, description: description, price: price, username: username})
+            body: formData
         }).then(
             response => {
                 if(!response.ok) {
@@ -107,12 +116,12 @@ function MyItemsComponent({username, authToken, csrfToken}) {
 
     const apiFetchPut = async () => {
         console.log("Editing item ", editItem, ", updating database...")
-        const response = await fetch(`${SERVER_URL}api/v1/shopItems/${editItem.name}/${editItem.price}/${username}/`)
+        const response = await fetch(`${SERVER_URL}/api/v1/shopItems/${editItem.name}/${editItem.price}/${username}/`)
         console.log(response)
         const data = await response.json();
         console.log("Item data: ", data)
         if (data['pk'] >= 0) {
-            fetch(SERVER_URL + 'api/v1/shopItems/' + data['pk'] + '/', {
+            fetch(SERVER_URL + '/api/v1/shopItems/' + data['pk'] + '/', {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -181,7 +190,7 @@ function MyItemsComponent({username, authToken, csrfToken}) {
     return (
         <div style={myItemsContainer}>
             <div>
-                <InputForm text={"Add shop item to database"} inputFormHandler={apiFetchPost}></InputForm>
+                <InputForm text={"Submit"} inputFormHandler={apiFetchPost}></InputForm>
             </div>
             {editItem &&
             <div style={{margin: '10px'}}>

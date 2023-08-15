@@ -5,4 +5,9 @@ from WebShopApp.models import ShopItem
 class ShopItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = ShopItem
-        fields = ("pk", "name", "description", "price", "username", "date", "version", "purchased_by")
+        fields = '__all__'
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        representation['image'] = instance.image.url
+        return representation

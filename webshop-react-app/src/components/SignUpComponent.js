@@ -50,7 +50,7 @@ function SignUpComponent() {
     }
 
     const signUpFormHandler = (email, password, username) => {
-        fetch(SERVER_URL + "api/v1/auth/register/", {
+        fetch(SERVER_URL + "/api/v1/auth/register/", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
