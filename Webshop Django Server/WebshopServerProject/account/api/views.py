@@ -59,6 +59,7 @@ class RegisterUserAPI_V1(APIView):
         return Response(user_serializer.data)
 
 
+"""
 class PopulateDB(APIView):
     def get(self, request):
         # Hard coded to delete all users, items and repopulate with 6 users,
@@ -122,3 +123,4 @@ class PopulateDB(APIView):
         print("Items created: ", ShopItem.objects.all())
 
         return Response({"message": "Database repopulated with "})
+"""

@@ -1,0 +1,54 @@
+
+
+{% block content %}
+    <html>
+    <head>
+        <script>
+            function repopDB() {
+                console.log("Function called")
+                fetch('http://localhost:8011/repopulate/')
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log(data.message);
+                    })
+                    .catch(err => {
+                        console.error("Error repopulating database: ", err)
+                        return false
+                    })
+                return true
+            }
+        </script>
+    </head>
+    <body>
+        <div style="margin: 10px; border: 2px solid black">
+            <div style="">
+                <h3 style="margin: 10px">
+                    Our shop statistics:
+                </h3>
+                <ul>
+                    <li>{{ nrItems }} items for sale!</li>
+                    <li>{{ recentItems }} items added today</li>
+                    <li>{{ nrUsers }} total users</li>
+                    <li>{{ activeUsers }} active users</li>
+                </ul>
+            </div>
+            <div style="margin: 10px; border: 1px solid black">
+                <h2 style="margin: 10px">
+                    By going to the store you accept our terms and conditions
+                </h2>
+                <div style="margin: auto; display: flex">
+                    <a style="font-weight: bold; font-size: large; margin: auto" href="/signup">Sign up</a>
+                    <a style="font-weight: bold; font-size: large; margin: auto" href="/shop">Go to shop</a>
+                    {% if not dbReset %}
+                        <a style="font-weight: bold; font-size: large; margin: auto" href="#" onclick="dbReset = repopDB()">Repopulate database with users and items</a>
+                    {% else %}
+                        <a style="font-weight: bold; font-size: large; margin: auto" href="/shop">Check out new items (Go to shop)</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </body>
+    </html>
+{% endblock %}
+
+

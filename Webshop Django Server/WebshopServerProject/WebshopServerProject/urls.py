@@ -21,6 +21,8 @@ from django.conf.urls.static import static
 from WebShopApp.views import *
 
 urlpatterns = [
+    path('', landing_page, name='landing_page'),
+    path('repopulate/', repopulate_database, name='repopulate_database'),
     path('admin/', admin.site.urls),
     # REST API endpoints
     path('api/v1/', include('WebShopApp.api.urls')),

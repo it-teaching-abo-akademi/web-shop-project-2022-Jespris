@@ -4,8 +4,30 @@ import stonks from '../assets/stonks.png';
 import stocksGraph from '../assets/stocksGraph.png';
 import cashHand from '../assets/cashHand.png';
 import {SERVER_URL} from "../App.js";
+import axios from "axios";
 
 function HomeComponent(props) {
+
+    const [html, setHtml] = useState('');
+
+    const repopDB = () => {
+        console.log("This shouldn't be called :/")
+    }
+
+    useEffect(() => {
+        axios.get(`${SERVER_URL}/`)
+            .then(response => {
+                const htmlContent = response.data;
+                setHtml(htmlContent);
+            })
+            .catch(err => {
+                console.log("Error fetching HTML: ", err)
+            });
+    }, []);
+
+    return <div dangerouslySetInnerHTML={{ __html: html }} />
+
+    /* OLD CLIENT SIDE PAGE DATA FROM WHEN I DIDN'T REALISE I WAS SUPPOSED TO SERVE HTML FROM SERVER ON THE LANDING PAGE
 
     const POPULATE_DB = SERVER_URL + '/api/v1/populateDB/';
 
@@ -145,8 +167,11 @@ function HomeComponent(props) {
             </div>
         </div>
     )
+    */
+
 }
 
+/*
 function GraphicsComponent({image}) {
     const GraphicsStyle = {
         margin: 'auto',
@@ -164,5 +189,6 @@ function GraphicsComponent({image}) {
     )
 
 }
+ */
 
 export default HomeComponent;
