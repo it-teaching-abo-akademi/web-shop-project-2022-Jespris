@@ -1,24 +1,12 @@
-
-
+<!DOCTYPE html>
 {% block content %}
-    <html>
+    <html lang="en">
     <head>
-        <script>
-            function repopDB() {
-                console.log("Function called")
-                fetch('http://localhost:8011/repopulate/')
-                    .then(response => response.json())
-                    .then(data => {
-                        console.log(data.message);
-                    })
-                    .catch(err => {
-                        console.error("Error repopulating database: ", err)
-                        return false
-                    })
-                return true
-            }
-        </script>
+        <meta charset="UTF-8">
+        <title>Jesper's Webshop</title>
+        <script src="resetDB.js"></script>
     </head>
+
     <body>
         <div style="margin: 10px; border: 2px solid black">
             <div style="">
@@ -38,12 +26,8 @@
                 </h2>
                 <div style="margin: auto; display: flex">
                     <a style="font-weight: bold; font-size: large; margin: auto" href="/signup">Sign up</a>
+                    <a style="font-weight: bold; font-size: large; margin: auto" href="/login">Log in</a>
                     <a style="font-weight: bold; font-size: large; margin: auto" href="/shop">Go to shop</a>
-                    {% if not dbReset %}
-                        <a style="font-weight: bold; font-size: large; margin: auto" href="#" onclick="dbReset = repopDB()">Repopulate database with users and items</a>
-                    {% else %}
-                        <a style="font-weight: bold; font-size: large; margin: auto" href="/shop">Check out new items (Go to shop)</a>
-                    {% endif %}
                 </div>
             </div>
         </div>

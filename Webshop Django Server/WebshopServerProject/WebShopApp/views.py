@@ -1,8 +1,4 @@
 import random
-
-from django.shortcuts import render
-
-# Create your views here.
 from django.shortcuts import render
 from .models import ShopItem, User
 from rest_framework.authtoken.models import Token
@@ -25,8 +21,7 @@ def landing_page(request):
         'nrItems': items.count(),
         'recentItems': recentItems.count(),
         'nrUsers': users.count(),
-        'activeUsers': activeUsers.count(),
-        'dbReset': False,
+        'activeUsers': activeUsers.count()
     }
     return render(request, 'landing_page.html', context)
 
