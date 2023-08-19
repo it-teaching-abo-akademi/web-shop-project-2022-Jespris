@@ -4,7 +4,7 @@ web-shop-project-2022-Jespris created by GitHub Classroom
 Project created by Jesper Andersson, jesper.j.andersson@abo.fi 
 
 Requirements implemented:
-Everything hopefully! 21/24 Mandatory points, 11/16 optional points
+Everything except responsivness. 24/24 Mandatory points, 15/16 optional points
 
 Functional Requirements
 
@@ -21,17 +21,16 @@ Functional Requirements
 11. Routing (3p)
 12. Edit Account (1p)
 13. Display inventory (3p)
-14. TODO: Edit item (2p)
+14. Edit item (2p)
 
 Non-Functional Requirements 
 
-15. TODO: TEST Responsiveness (1p)
 16. Security (2p)
 17. Usability (1p)
 
 Technical requirements
 
-18. Backend (MANDATORY) TODO: move landing page (serve html)
+18. Backend (MANDATORY)
 19. Frontend (MANDATORY)
-20. Browser (MANDATORY) TODO: test on google chrome (Mostly tested on Brave)
+20. Browser (MANDATORY)
 21. Project folder (MANDATORY) TODO: build folder
