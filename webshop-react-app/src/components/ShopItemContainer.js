@@ -1,4 +1,3 @@
-import attackCat from "../assets/attackCat.gif";
 import {useState} from "react";
 import shoppingCart from "../assets/shoppingCart.png";
 import {SERVER_URL} from "../App";
@@ -68,7 +67,13 @@ function ShopItemContainer(props) {
                     </div>
                 </div>
             </div>
-            <ShoppingCart cartItems={props.cartItems} deleteCartItemHandler={props.deleteCartItemHandler} deleteCartHandler={props.deleteCartHandler} authToken={props.authToken} username={props.username}></ShoppingCart>
+            <ShoppingCart
+                cartItems={props.cartItems}
+                deleteCartItemHandler={props.deleteCartItemHandler}
+                deleteCartHandler={props.deleteCartHandler}
+                authToken={props.authToken}
+                username={props.username}
+            ></ShoppingCart>
         </div>
     )
 }
@@ -131,11 +136,92 @@ function ShoppingCart(props) {
             }
         }
 
-        // TODO: Show user total success and close cart?
-        // - refresh
+        if (totalSuccess){
+            console.log("Items are now purchased!")
+            // TODO: Show user total success, send emails and close cart?
+            const confirmation = await sendConfirmationEmails()
+
+            // - refresh or redirect after success?
+            if (confirmation) {
+                console.log("Sent confirmation emails!")
+
+            } else {
+                // hhmm IDK what to do here
+                console.log("Failure :/")
+            }
+
+            redirect('/myitems/');
+        } else {
+            console.log("Something went wrong, aborting purchase...")
+        }
     }
 
-    const buyItemHandler = async(cartItem) => {
+    function getUserEmail() {
+        return fetch(SERVER_URL + '/api/v1/auth/users/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',  // Auth token hopefully set in App.js
+                },
+                body: JSON.stringify({token: props.authToken})
+            }).then(
+                response => {
+                    if (!response.ok) {
+                        throw new Error("API posting error: " + response.statusCode);
+                    }
+                    return response.json();
+                }
+            ).then(data => {
+                return data.email;
+            }).catch(err => {
+                  console.log("Error getting user email!!! Error:", err)
+            })
+    }
+
+    const sendConfirmationEmails = async () => {
+        try {
+            // get item dictionary {sellerUser1: [item1, item2...]...}
+            const itemDict = {};
+
+            // cartItem structure: [itemName, itemPrice, itemUsername, itemVersion, itemStateChange] = item;
+            props.cartItems.forEach(item => {
+                if (!itemDict[item[2]]) {
+                    // make a new key
+                    itemDict[item[2]] = []
+                }
+                // push the itemName to the key
+                itemDict[item[2]].push(item[0])
+            })
+
+            fetch(`${SERVER_URL}/api/v1/confirmation-email/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    username: props.username,
+                    email: getUserEmail(),
+                    items: itemDict
+                })
+            }).then(
+                response => {
+                    if (!response.ok) {
+                        throw new Error("Failed to buy item.. " + response.statusCode)
+                    }
+                    return response.json()
+                }
+            ).catch(err => {
+                console.log("Error sending emails:", err)
+                return false;
+            })
+            // SUCCESS!!!
+            return true;
+        } catch (err) {
+            console.log("Error sending emails:", err)
+            return false;
+        }
+    }
+
+    const buyItemHandler = async (cartItem) => {
         // get the item ID to buy
         const response = await fetch(`${SERVER_URL}/api/v1/shopItems/${cartItem[0]}/${cartItem[1]}/${cartItem[2]}/`)
         console.log(response);
@@ -159,7 +245,7 @@ function ShoppingCart(props) {
         } else {
             // Everything is in order (hopefully)
             // TODO: set sold to true and update version
-            fetch(`${SERVER_URL}/api/v1/shopItems/buy/${data['pk']}/`, {
+            fetch(`${SERVER_URL}/api/v1/shopItems/buy/${data['id']}/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -176,7 +262,7 @@ function ShoppingCart(props) {
                     return response.json()
                 }
             ).catch(err => console.log("ERROR: ", err))
-            redirect('http://localhost:3000/shop')
+            // redirect('http://localhost:3000/shop')
             return true;  // success
         }
     }

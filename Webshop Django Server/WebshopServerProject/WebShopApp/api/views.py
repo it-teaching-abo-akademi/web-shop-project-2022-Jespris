@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from django.db.models import Q
 from rest_framework import generics
 from rest_framework.views import APIView
@@ -9,6 +10,8 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.authentication import TokenAuthentication
 from django.shortcuts import get_object_or_404
+from rest_framework.decorators import api_view
+from django.core.mail import EmailMessage
 
 
 class ShopItemPagination(PageNumberPagination):
@@ -125,7 +128,7 @@ class BuyShopItemAPI_V1(APIView):
     serializer_class = ShopItemSerializer
 
     def post(self, request, *args, **kwargs):
-        itemID = self.kwargs.get('itemID', '')
+        itemID = self.kwargs.get('pk', '')
         purchasedBy = request.data['username']  # IDK if this works
         shopItem = get_object_or_404(ShopItem, pk=itemID)
         shopItem.sold = True
@@ -133,3 +136,35 @@ class BuyShopItemAPI_V1(APIView):
         shopItem.version += 1
         shopItem.save()
         return Response({"message": "Item bought!"})
+
+
+@api_view(['POST'])
+def send_confirmation_email(request):
+    # get user and items information
+    user_username = request.data['username']
+    user_email = request.data['email']
+    item_list = request.data['items']  # Array of objects: {sellerName1: [item1, item2], sellerName2: [item3]...}
+    print("Item list:", item_list)
+
+    # Send email to item owners
+    for key, value in item_list.items():
+        print("Item key:", key, "Item value:", value)
+        subject = 'Purchase Confirmation'
+        message = f'{user_username} just purchased your items: {value}.'
+        from_email = 'jesper@Webshop.com'
+        recipient_list = [User.objects.get(username=key).email]
+
+        email = EmailMessage(subject, message, from_email, recipient_list)
+        email.send()
+
+    # Send email to user purchasing items
+    subject = 'Purchase Confirmation'
+    message = f'Thank you for purchasing items: {item_list.values().join(", ")}.'
+    from_email = 'jesper@Webshop.com'
+    recipient_list = [user_email]
+
+    email = EmailMessage(subject, message, from_email, recipient_list)
+    print("Email about to be sent:", email)
+    email.send()
+
+    return Response({'message': 'Confirmation emails sent'})

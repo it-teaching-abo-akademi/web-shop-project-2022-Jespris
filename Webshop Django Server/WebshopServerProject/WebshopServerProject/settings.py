@@ -34,6 +34,14 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 10,  # Number of items per page (in this case, 10)
 }
 
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'Webshop.com'
+EMAIL_PORT = 8011
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'jesper@Webshop.com'
+EMAIL_HOST_PASSWORD = 'jesper1234'
+DEFAULT_FROM_EMAIL = 'jesper@Webshop.com'
+
 # Application definition
 
 INSTALLED_APPS = [
