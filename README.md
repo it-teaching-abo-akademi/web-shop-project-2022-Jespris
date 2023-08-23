@@ -17,7 +17,7 @@ Functional Requirements
 7. Add item (MANDATORY) (2p)
 8. Add to cart (MANDATORY) (3p)
 9. Remove from cart (1p)
-10. (TODO: Confirmation emails) Pay (MANDATORY) (6p)
+10. Pay (MANDATORY) (6p)
 11. Routing (3p)
 12. Edit Account (1p)
 13. Display inventory (3p)
@@ -33,4 +33,6 @@ Technical requirements
 18. Backend (MANDATORY)
 19. Frontend (MANDATORY)
 20. Browser (MANDATORY)
-21. Project folder (MANDATORY) TODO: build folder
+21. Project folder (MANDATORY)
+
+There is a SERVER_URL global const in App.js in the react folder, where you can edit the port if you decide to run the server on another port.
