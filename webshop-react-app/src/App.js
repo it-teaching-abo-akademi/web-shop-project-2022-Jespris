@@ -10,7 +10,7 @@ import './menu.css';
 import axios from "axios";
 import {useEffect, useState} from "react";
 
-export const SERVER_URL = 'http://localhost:8011'
+export const SERVER_URL = 'http://localhost:8011'  // Edit this depending on which port the server runs on
 
 function App() {
 
