@@ -1,7 +1,7 @@
 import {useState} from "react";
 import shoppingCart from "../assets/shoppingCart.png";
 import {SERVER_URL} from "../App";
-import {redirect} from "react-router-dom";
+import {Navigate} from "react-router-dom";
 
 function ShopItemContainer(props) {
     const shopContainerStyle = {
@@ -89,7 +89,6 @@ function ShoppingCart(props) {
         margin: '10px',
     }
 
-
     const openCartStyle = {
         ...cartStyle,
         backgroundColor: 'yellow'
@@ -98,6 +97,7 @@ function ShoppingCart(props) {
     const closedCartWithContentMargin = '10px';
 
     const [showCart, setShowCart] = useState(false);
+    const [redirectToMyItems, setRedirectToMyItems] = useState(false);
 
     const showBasketHandler = (e) => {
         if (props.cartItems.length > 0) {
@@ -144,13 +144,11 @@ function ShoppingCart(props) {
             // - refresh or redirect after success?
             if (confirmation) {
                 console.log("Sent confirmation emails!")
-
+                setRedirectToMyItems(true)
             } else {
                 // hhmm IDK what to do here
                 console.log("Failure :/")
             }
-
-            redirect('/myitems/');
         } else {
             console.log("Something went wrong, aborting purchase...")
         }
@@ -267,6 +265,8 @@ function ShoppingCart(props) {
         }
     }
 
+
+
     // cartItems structure: [[name, price, username, version, stateChange], [...]]
 
     return (
@@ -319,6 +319,9 @@ function ShoppingCart(props) {
                     )}
                 </div>
             )}
+            {redirectToMyItems &&
+                <Navigate replace to="/myitems/" />
+            }
         </div>
     )
 }

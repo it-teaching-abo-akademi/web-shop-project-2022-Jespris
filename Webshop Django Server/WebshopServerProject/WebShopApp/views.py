@@ -67,7 +67,7 @@ def repopulate_database(request):
     for i in range(6):
         user = User.objects.create_user(
             username="testuser"+str(i),
-            email="testuser"+str(i)+"@shop.aa",
+            email="testuser"+str(i)+"@Webshop.com",
             password="pass"+str(i)
         )
         user.save()

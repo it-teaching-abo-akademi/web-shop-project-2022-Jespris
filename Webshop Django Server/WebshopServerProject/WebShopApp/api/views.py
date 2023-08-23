@@ -155,16 +155,26 @@ def send_confirmation_email(request):
         recipient_list = [User.objects.get(username=key).email]
 
         email = EmailMessage(subject, message, from_email, recipient_list)
-        email.send()
+        try:
+            email.send()
+        except Exception as e:
+            print("Failed to send email, error:", e)
+            print("Email that failed to send:", email.message())
+            print("Email content:", email.body)
 
     # Send email to user purchasing items
     subject = 'Purchase Confirmation'
-    message = f'Thank you for purchasing items: {item_list.values().join(", ")}.'
+    message = f'Thank you for purchasing items: {item_list.values()}.'
     from_email = 'jesper@Webshop.com'
     recipient_list = [user_email]
 
     email = EmailMessage(subject, message, from_email, recipient_list)
-    print("Email about to be sent:", email)
-    email.send()
+    # print("Email about to be sent:", email)
+    try:
+        email.send()
+    except Exception as e:
+        print("Failed to send email to buyer, error:", e)
+        print("Email that failed to send:", email.message())
+        print("Email content:", email.body)
 
     return Response({'message': 'Confirmation emails sent'})

@@ -45,7 +45,7 @@ function ShopItemInfo(props) {
 
     useEffect(() => {
         setInCart(
-            props.cartItems.some(item => {
+            Array.isArray(props.cartItems) && props.cartItems.some(item => {
                 console.log("Item: ", item)
                 const [itemName, itemPrice, itemUsername, itemVersion, itemStateChange] = item;
                 return itemName === name && itemPrice === price && itemUsername === username;
