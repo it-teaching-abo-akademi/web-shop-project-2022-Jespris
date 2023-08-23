@@ -1,0 +1,8 @@
+{
+  "short_name": "Webshop React App",
+  "name": "Webshop React App",
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#ffffff"
+}
